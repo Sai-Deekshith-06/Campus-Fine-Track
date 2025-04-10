@@ -135,7 +135,7 @@ def delete_fine(fine_id):
             flash("Deleted Successfully!","1")
         else:
             flash("Error!! Fine not found","0")
-    except:
+    except Exception as e:
         flash(f"Error deleting fine: {e}", "0")
     return redirect(url_for('admin.admin_view_fines'))
 
