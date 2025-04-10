@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+{% block body %}
+
+
+
+
+            New Fine Entry
+        
+
+
+
+Student ID
+
+
+
+Student Name
+
+
+
+Email
+
+
+
+Fine Category
+
+Select Category
+                        {% for category in fine_categories %}
+                            {{ category.type }}
+                        {% endfor %}
+                    
+Fine category not found.
+
+
+Fine Amount
+
+
+
+Due Date
+
+
+
+Reason
+
+
+                        0/200 characters
+                    
+
+
+
+Submit
+
+
+
+
+
+{% endblock %}

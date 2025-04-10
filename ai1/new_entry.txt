@@ -1,0 +1,36 @@
+
+
+
+Create New Fine
+
+
+Create New Fine
+
+
+Student UID:
+
+
+
+
+Fine Category:
+
+
+
+
+Reason:
+
+
+
+
+Amount:
+
+
+
+
+Due Date:
+
+
+
+Create Fine
+
+

@@ -1,0 +1,47 @@
+
+
+
+
+
+
+
+Admin Login 
+
+
+
+
+
+
+
+
+                        Campus Fine Track
+                        
+
+
+
+
+
+                            Select Role
+                            
+
+
+
+
+                                    Admin
+                                
+
+                                    Student
+                                
+
+
+
+
+
+
+
+    {% block body %}
+        
+Admin
+
+    {% endblock %}
+

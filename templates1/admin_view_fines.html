@@ -1,0 +1,132 @@
+{% extends 'admin_home.html' %}
+{% block header_title %}
+    <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold mb-4">
+            <i class="fas fa-file-invoice-dollar"></i>
+            View Fines
+        </h2>
+        <div class="mb-4">
+            <form method="GET" action="{{ url_for('admin_view_fines') }}">
+                <input type="text" name="student_id" placeholder="Search by Student ID" value="{{ std_id }}" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Search</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main_content %}
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="mb-4 flex items-center space-x-4">
+        <form method="GET" action="{{ url_for('admin_view_fines') }}" id="filterForm" class="flex items-center space-x-4">
+            <div>
+                <label for="fine_category" class="block text-sm font-medium text-gray-700">Category:</label>
+                <select name="fine_category" id="fine_category" class="mt-1 block w-full py-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">All</option>
+                    {% for category in fine_categories %}
+                        <option value="{{ category.type }}" {% if request.args.get('fine_category') == category.type %}selected{% endif %}>{{ category.type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="due_date" class="block text-sm font-medium text-gray-700">Due Date:</label>
+                <input type="date" name="due_date" id="due_date" value="{{ request.args.get('due_date', '') }}" class="mt-1 block w-full py-1 px-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700">Status:</label>
+                <select name="status" id="status" class="mt-1 block w-full py-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">All</option>
+                    <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="paid" {% if request.args.get('status') == 'paid' %}selected{% endif %}>Paid</option>
+                </select>
+            </div>
+            
+            <div>
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Apply Filters</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full leading-normal">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Student ID
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Student Name
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Fine Category
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Amount
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Due Date
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fine in fines %}
+                    <tr>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.student_id }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.student_name }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.fine_category }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.amount }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.due_date }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            {{ fine.status }}
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <form method="POST" action="/admin/fines/{{ fine._id }}/pay">
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline">Accept Payment</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterForm = document.getElementById('filterForm');
+        const fineCategorySelect = document.getElementById('fine_category');
+        const dueDateInput = document.getElementById('due_date');
+        const statusSelect = document.getElementById('status');
+
+        // Optional: You can add event listeners to the filter elements to submit the form on change
+        fineCategorySelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+
+        dueDateInput.addEventListener('change', function() {
+            filterForm.submit();
+        });
+
+        statusSelect.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
+</script>
+{% endblock %}

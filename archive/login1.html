@@ -1,0 +1,129 @@
+<html>
+ <head>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <script>
+   document.addEventListener('DOMContentLoaded', function () {
+     const roleButton = document.getElementById('roleButton');
+     const roleMenu = document.getElementById('roleMenu');
+     const mainContent = document.getElementById('mainContent');
+
+     roleButton.addEventListener('click', function () {
+       roleMenu.classList.toggle('hidden');
+     });
+
+     document.querySelectorAll('.role-option').forEach(option => {
+       option.addEventListener('click', function () {
+         const role = this.getAttribute('data-role');
+         roleButton.innerHTML = `${role} <i class="fas fa-chevron-down ml-1"></i>`;
+         roleMenu.classList.add('hidden');
+        //  updateInterface(role);
+       });
+     });
+
+   });
+  </script>
+  <link rel="stylesheet" href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/dist/mdb5/standard/core.min.css">
+ </head>
+ <body class="bg-gray-100">
+  <nav class="bg-white shadow-md">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+     <div class="flex">
+      <div class="flex-shrink-0 flex items-center">
+       <img alt="_logo_" class="h-8 w-8" height="32" src="" width="32"/>
+       <span class="ml-2 text-xl font-semibold text-gray-800">
+        Campus Fine Track
+       </span>
+      </div>
+     </div>
+     <div class="flex items-center">
+      <div class="relative">
+       <button class="bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
+        id="roleButton">
+        Select Role
+        <i class="fas fa-chevron-down ml-1">
+        </i>
+       </button>
+       <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden" id="roleMenu">
+        <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 role-option" data-role="Admin" href="#">
+            Admin
+          </a>
+          <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 role-option" data-role="Student" href="#">
+            Student
+          </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </nav>
+  <main class="py-6">
+   <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% block body %}
+      <section class="vh-100">
+        <div class="row d-flex justify-content-center align-items-center h-50">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-white shadow rounded-lg p-6 mb-8">
+          <h2 class="text-2xl font-bold mb-4">
+              Login
+          </h2>
+          <form id="fineForm" action="{{ url_for('admin_login') }}" method="post">
+            <div class="hidden">
+              <div data-mdb-input-init class="form-outline form-black mb-4">
+                <input type="text" id="uname" name="uname" class="form-control form-control-lg border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                <label class="form-label" for="uname">Admin ID</label>
+              </div>
+              <div data-mdb-input-init class="form-outline form-black mb-4">
+                <input type="password" id="pswd" name="pswd" class="form-control form-control-lg border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                <label class="form-label" for="pswd">Password</label>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700" for="uname" >Admin ID</label>
+                  <input 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                    id="uname" 
+                    name="uname" 
+                    type="text"              
+                    required
+                  />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700" for="pswd" >Password</label>
+                  <input 
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                    id="pswd" 
+                    name="pswd" 
+                    type="password"
+                    required
+                  />
+              </div>
+            </div>
+            <div class="grid-cols-2 justify-center">
+              <button 
+                class="bg-blue-600 text-white px-4 py-2 rounded-md " 
+                type="submit"
+              >login</button>
+              <button 
+                  class="bg-blue-600 text-white px-4 py-2 rounded-md " 
+                  type=""
+              >forget password</button>
+            </div>
+          </form>
+        </div>
+        </div>
+        </div>
+      </section>
+    {% endblock %}
+   </div>
+  </main>
+ </body>
+</html>

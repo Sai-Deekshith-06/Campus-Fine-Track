@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+{% block body %}
+
+View Fines
+
+
+
+
+
+                        Student ID
+                    
+
+                        Student Name
+                    
+
+                        Fine Category
+                    
+
+                        Amount
+                    
+
+                        Due Date
+                    
+
+                        Status
+                    
+
+                        Actions
+                    
+
+
+
+                {% for fine in fines %}
+                    
+
+                            {{ fine.student_id }}
+                        
+
+                            {{ fine.student_name }}
+                        
+
+                            {{ fine.fine_category }}
+                        
+
+                            {{ fine.amount }}
+                        
+
+                            {{ fine.due_date }}
+                        
+
+                            {{ fine.status }}
+                        
+
+
+                                Accept Payment
+                            
+
+
+                {% endfor %}
+            
+
+
+
+
+{% endblock %}

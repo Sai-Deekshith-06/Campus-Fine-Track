@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+{% block body %}
+
+
+        {% if error %}
+            {{ error }}
+        {% endif %}
+        
+
+
+
+
+                            Login
+                        
+
+
+
+Admin ID
+
+
+
+Password
+
+
+
+
+Login
+                                
+Forget Password  
+
+
+
+
+
+
+
+
+{% endblock %}
