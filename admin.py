@@ -70,7 +70,8 @@ def admin_create_fine():
         db.fines.insert_one(new_fine)
         return redirect(url_for('admin.admin_view_fines'))
     else:
-        flash('Student not found', 'error')  # Use flash for user feedback
+        # flash('Student not found', 'error')  # Use flash for user feedback
+        message = 'Student not found'
         return redirect(url_for('admin.admin_new_fine_form'))
 
 
@@ -111,7 +112,7 @@ def admin_view_fines():
         if status:
             query['status'] = status
 
-        fines = list(db.fines.find(query))
+        fines = list(db.fines.find(query).limit(75))
 
         for fine in fines:
             student = db.students.find_one({'_id': fine['student_id']})  # Assuming 'id' is the correct field
@@ -121,10 +122,23 @@ def admin_view_fines():
                 fine['student_name'] = 'Unknown'
 
         fine_categories = list(db.fine_categories.find())
-
+        fines.reverse()
         return render_template('admin_view_fines.html', fines=fines, fine_categories=fine_categories, std_id=student_id)
     else:
         return redirect(url_for('admin.admin_login'))
+
+@admin_bp.route('/fines/<fine_id>/delete', methods=['POST'])
+def delete_fine(fine_id):
+    try:
+        result = db.fines.delete_one({'_id': ObjectId(fine_id)}) 
+        if result.deleted_count:
+            flash("Deleted Successfully!","1")
+        else:
+            flash("Error!! Fine not found","0")
+    except:
+        flash(f"Error deleting fine: {e}", "0")
+    return redirect(url_for('admin.admin_view_fines'))
+
 
 
 @admin_bp.route('/fines/<fine_id>/pay', methods=['POST'])
@@ -138,13 +152,15 @@ def accept_payment(fine_id):
             {'$set': {'status': 'paid'}}
         )
         if result.modified_count > 0:
-            return jsonify({'message': 'Payment accepted'}), 200
+            flash('Payment accepted', '1')  # Use flash for success message
         else:
-            return jsonify({'message': 'Fine not found'}), 404
+            flash('Fine not found or already paid', '0')  # Use flash for warning
     except Exception as e:
         print(f"Error accepting payment: {e}")
-        return jsonify({'message': 'Error accepting payment'}), 500
-    
+        flash('Error accepting payment', '0')  # Use flash for error
+
+    return redirect(url_for('admin.admin_view_fines'))
+  
 
 @admin_bp.route('/logout')
 def admin_logout():

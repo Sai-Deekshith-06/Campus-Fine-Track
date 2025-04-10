@@ -1,23 +1,19 @@
 {% extends 'admin_home.html' %}
-
 {% block header_title %}
     <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold">
+        <h2 class="text-2xl font-bold mb-4">
             <i class="fas fa-file-invoice-dollar"></i>
             View Fines
         </h2>
-        <div class="">
+        <div class="mb-4">
             <form method="GET" action="{{ url_for('admin.admin_view_fines') }}">
                 <input type="text" name="student_id" placeholder="Search by Student ID" value="{{ std_id }}" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Search</button>
             </form>
         </div>
     </div>
-{% endblock %}
 
-{% block main_content %}
-<div class="bg-white shadow rounded-lg p-6 flex flex-col h-full">
-    <div class="mb-4 flex items-center space-x-4">
+    <div class="flex items-center space-x-4">
         <form method="GET" action="{{ url_for('admin.admin_view_fines') }}" id="filterForm" class="flex items-center space-x-4">
             <div>
                 <label for="fine_category" class="block text-sm font-medium text-gray-700">Category:</label>
@@ -42,17 +38,20 @@
                     <option value="paid" {% if request.args.get('status') == 'paid' %}selected{% endif %}>Paid</option>
                 </select>
             </div>
-
+            
             <div>
                 <button type="submit" class="hidden bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Apply Filters</button>
             </div>
         </form>
     </div>
+    {% endblock %}
 
-    <div class="overflow-auto flex-grow">
+    {% block main_content %}
+    <div class="bg-white shadow rounded-lg p-6 flex flex-col h-full"> 
+    <div class="overflow-auto flex-grow"> 
         <table class="min-w-full leading-normal">
-            <thead class="bg-gray-100 sticky top-0">
-                <tr class="justify-items-center">
+            <thead class="bg-gray-100 sticky top-0 z-1">  
+                <tr>
                     <th class="px-3 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Transaction ID
                     </th>
@@ -71,7 +70,7 @@
                     <th class="px-3 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Status
                     </th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th class="px-3 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
@@ -97,20 +96,13 @@
                         <td class="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                             {{ fine.status }}
                         </td>
-                        <td class="px-3 py-3 border-b border-gray-200 bg-white text-sm justify-items-center">
+                        <td class="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                             {% if fine.status == 'pending' %}
-                            <form id="accept_payment_{{ fine._id }}" method="POST" action="/admin/fines/{{ fine._id }}/pay">
-                                <button
-                                    type="submit"
+                            <form method="POST" action="/admin/fines/{{ fine._id }}/pay">
+                                <button 
+                                    type="submit" 
                                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
                                     >Accept Payment</button>
-                            </form>
-                            {% else %}
-                            <form id="delete_{{ fine._id }}"  method="POST" action="/admin/fines/{{ fine._id }}/delete">
-                                <button
-                                    type="submit"
-                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
-                                    >Delete</button>
                             </form>
                             {% endif %}
                         </td>
@@ -147,9 +139,9 @@
     <div class="flash-messages z-100 absolute top-4 right-4" style="width: 300px;">
         {% for category, message in messages %}
             {% if category == '0' %}
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">  
             {% else %}
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">  
             {% endif %}
             <div class="flex-grow">
                 <strong class="font-bold">{{ message }}</strong>
@@ -168,7 +160,7 @@
     </div>
 {% endif %}
 {% endwith %}
-
+    
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const flashMessages = document.querySelectorAll('.flash-messages > div');
@@ -179,8 +171,8 @@
                 flash.style.opacity = '0';
                 setTimeout(() => {
                     flash.remove();
-                }, 500); // 3 seconds timeout
-            }, 5000);
+                }, 500); // Remove after fade out
+            }, 5000); // 3 seconds timeout
 
             const closeButton = flash.querySelector('.close-flash');
             if (closeButton) {

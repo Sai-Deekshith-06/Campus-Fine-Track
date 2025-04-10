@@ -1,0 +1,42 @@
+# student.py
+from flask import Blueprint, render_template, redirect, url_for, request, session, jsonify, flash
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
+from bson.objectid import ObjectId
+import datetime
+
+student_bp = Blueprint('student', __name__, url_prefix='/student')
+
+# MongoDB Connection (moved outside functions for efficiency)
+client = MongoClient('mongodb://localhost:27017/')  # Replace with your MongoDB connection string
+db = client.finesdb
+
+@student_bp.route('/search', methods=['POST'])
+def student_search():
+    student_uid = request.form.get('student_uid')
+    if student_uid:
+        fines = db.fines.find({'student_id': student_uid}).limit(1) # Check if at least one fine exists
+        if list(fines):
+            return redirect(url_for('get_student_fines', student_id=student_uid))
+        else:
+            flash('No fines found for the provided Student UID.', 'info')
+            return redirect(url_for('index')) # Redirect back to index with a message
+    else:
+        flash('Please enter a Student UID.', 'warning')
+        return redirect(url_for('index'))
+
+@student_bp.route('/<string:student_id>/fines', methods=['GET'])
+def get_student_fines(student_id):
+    fines = list(db.fines.find({'student_id': student_id}))
+    for fine in fines:
+        fine['_id'] = str(fine['_id'])
+        # You might want to fetch and include fine category details here
+    return jsonify(fines), 200
+
+@student_bp.route('/get_fine_amount/<category>')
+def get_fine_amount(category):
+    fine_category = db.fine_categories.find_one({'type': category})
+    if fine_category:
+        return jsonify({'amount': fine_category['amount']})
+    else:
+        return jsonify({'amount': None})

@@ -14,7 +14,7 @@ db = client.finesdb
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def admin_login():
-    error = None
+    message = None
     if request.method == 'POST':
         username = request.form.get('uname')
         password = request.form.get('pswd')
@@ -25,13 +25,11 @@ def admin_login():
                 session['admin_id'] = str(admin['_id'])
                 return redirect(url_for('admin.admin_home'))  # Use the blueprint name
             else:
-                flash('Invalid username or password', 'error')
-                error = 'Invalid username or password'
+                message = 'Invalid username or password'
         else:
-            flash('Please enter both username and password', 'error')
-            error = 'Please enter both username and password'
+            message = 'Enter both username and password'
 
-        return render_template('index.html', error=error)
+        return render_template('index.html', message=message)
 
     return redirect(url_for('admin.admin_home'))
 

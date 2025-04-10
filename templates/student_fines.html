@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .fine-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .fine-table th,
+        .fine-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .fine-table th {
+            background-color: #e5e7eb;
+            color: #374151;
+            font-weight: bold;
+        }
+
+        .fine-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .fine-table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .no-fines {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Student Fines</h1>
+        </div>
+
+        {% if fines %}
+        <table class="fine-table">
+            <thead>
+                <tr>
+                    <th>Fine Category</th>
+                    <th>Reason</th>
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fine in fines %}
+                <tr>
+                    <td>{{ fine.fine_category }}</td>
+                    <td>{{ fine.reason }}</td>
+                    <td>{{ fine.amount }}</td>
+                    <td>{{ fine.due_date }}</td>
+                    <td>
+                        {% if fine.status == 'pending' %}
+                        <span class="text-red-500">{{ fine.status }}</span>
+                        {% elif fine.status == 'paid' %}
+                        <span class="text-green-500">{{ fine.status }}</span>
+                        {% else %}
+                        {{ fine.status }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-fines">No fines found for this student.</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

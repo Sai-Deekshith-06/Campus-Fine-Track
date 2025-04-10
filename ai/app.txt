@@ -11,7 +11,9 @@ mongo = PyMongo(app)
 
 # Import and Register the Blueprint
 from admin import admin_bp  # Import the blueprint
+from student import student_bp  # Import the blueprint
 app.register_blueprint(admin_bp)  # Register it with the app
+app.register_blueprint(student_bp)  # Register it with the app
 
 
 @app.route("/")

@@ -5,9 +5,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/dist/mdb5/standard/core.min.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 h-screen">
 <main class="flex h-screen">
-
     <aside class="bg-blue-600 text-white shadow-md w-64 py-4 px-4">
         <div class="text-2xl font-semibold mb-8">Admin Menu</div>
         <nav>
@@ -22,7 +21,7 @@
                 <i class="fas fa-file-invoice-dollar"></i>
                 View Fines
             </a>
-             <a href="" class="block py-2 hover:bg-blue-800 rounded {% if request.endpoint == 'admin_profile' %}bg-blue-800 font-semibold{% endif %}">
+             <a href="" class="hidden block py-2 hover:bg-blue-800 rounded {% if request.endpoint == 'admin_profile' %}bg-blue-800 font-semibold{% endif %}">
                 <i class="fas fa-user mr-2"></i> Profile
             </a>
             <a href="/admin/logout" class="block py-2 hover:bg-blue-800 rounded">
@@ -31,8 +30,8 @@
         </nav>
     </aside>
 
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="bg-white py-4 px-6 shadow-md">
+    <div class="flex-1 flex flex-col overflow-auto">
+        <header class="bg-white py-4 px-6 shadow-md sticky top-0 z-10">
             {% block header_title %}
                 <h2 class="text-2xl font-bold mb-4 text-gray-800">
                     <i class="fas fa-home mr-2"></i>
@@ -41,12 +40,53 @@
             {% endblock %}
         </header>
         {% block main_content %}
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 py-4 px-6"></main>
-                <div class="text-gray-700">
-                    Welcome to the Admin Dashboard!  Use the menu on the left to manage fines.
+            <div class="flex-1 overflow-auto bg-gray-50 py-4 px-6">
+                <div class="text-gray-700 text-lg">
+                    Welcome to the Admin Dashboard!  <br>
+                    Use the menu on the left to manage fines. <br>
+                    You can add new fines, view existing fines, and manage student records. <br>
+                    
                 </div>
-            </main>
+            </div>
         {% endblock %}
     </div>
 </main>
+{% if message %}
+    <div class="flash-messages z-100 absolute top-4 right-4" style="width: 300px;">  
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">  
+            <div class="flex-grow">
+                <strong class="font-bold">{{ message }}</strong>
+            </div>
+            <span class="cursor-pointer close-flash">
+                <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span>
+        </div>
+    </div>
+    {% endif %}
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-messages > div');
+
+        flashMessages.forEach(flash => {
+            setTimeout(() => {
+                flash.style.transition = 'opacity 0.5s ease-in-out';
+                flash.style.opacity = '0';
+                setTimeout(() => {
+                    flash.remove();
+                }, 500); // Remove after fade out
+            }, 5000); // 3 seconds timeout
+
+            const closeButton = flash.querySelector('.close-flash');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    flash.remove();
+                });
+            }
+        });
+    });
+</script>
 </body>
+</html>

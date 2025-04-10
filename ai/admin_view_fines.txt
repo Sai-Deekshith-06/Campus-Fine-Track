@@ -43,12 +43,12 @@
             </div>
             
             <div>
-                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Apply Filters</button>
+                <button type="submit" class="hidden bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Apply Filters</button>
             </div>
         </form>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-auto max-h-full"> 
         <table class="min-w-full leading-normal">
             <thead class="bg-gray-100">
                 <tr>
@@ -97,12 +97,14 @@
                             {{ fine.status }}
                         </td>
                         <td class="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                            {% if fine.status == 'pending' %}
                             <form method="POST" action="/admin/fines/{{ fine._id }}/pay">
                                 <button 
                                     type="submit" 
                                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
                                     >Accept Payment</button>
                             </form>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
@@ -129,6 +131,55 @@
 
         statusSelect.addEventListener('change', function() {
             filterForm.submit();
+        });
+    });
+</script>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <div class="flash-messages z-100 absolute top-4 right-4" style="width: 300px;">
+        {% for category, message in messages %}
+            {% if category == '0' %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">  
+            {% else %}
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-2 flex items-center justify-between" role="alert">  
+            {% endif %}
+            <div class="flex-grow">
+                <strong class="font-bold">{{ message }}</strong>
+            </div>
+            <span class="cursor-pointer close-flash">
+                {% if category == '0' %}
+                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                {% else %}
+                    <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                {% endif %}
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-messages > div');
+
+        flashMessages.forEach(flash => {
+            setTimeout(() => {
+                flash.style.transition = 'opacity 0.5s ease-in-out';
+                flash.style.opacity = '0';
+                setTimeout(() => {
+                    flash.remove();
+                }, 500); // Remove after fade out
+            }, 5000); // 3 seconds timeout
+
+            const closeButton = flash.querySelector('.close-flash');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    flash.remove();
+                });
+            }
         });
     });
 </script>
