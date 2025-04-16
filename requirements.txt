@@ -1,2 +1,4 @@
 Flask
 Flask-PyMongo
+Flask-Mail
+python-dotenv

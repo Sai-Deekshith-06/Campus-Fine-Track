@@ -16,6 +16,7 @@ fi
 if [ -z "$VIRTUAL_ENV" ]; then
     echo "Virtual environment not active. Activating..."
     source venv/Scripts/activate
+    echo "Virtual environment is actived"
 fi
 if [ ! -z "$VIRTUAL_ENV" ]; then
     echo "Virtual environment is actived"

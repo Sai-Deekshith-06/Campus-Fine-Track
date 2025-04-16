@@ -1,0 +1,113 @@
+{% extends 'admin_home.html' %}
+{% block header_title %}
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">
+        <i class="fas fa-check-circle mr-2"></i>
+        Payment Approvals
+    </h2>
+{% endblock %}
+
+{% block main_content %}
+<div class="flex-1 overflow-auto bg-gray-50 py-4 px-6">
+    <div class="bg-white shadow rounded-lg p-6">
+        {% if approvals %}
+            <div class="space-y-6">
+                {% for approval in approvals %}
+                <div class="border border-gray-200 rounded-md overflow-hidden">
+                    <div class="bg-gray-50 p-4 border-b border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            <div>
+                                <span class="font-semibold text-gray-700 block text-sm">Student:</span>
+                                <span class="text-gray-900">{{ approval.student_name }} ({{ approval.student_id_str }})</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-gray-700 block text-sm">Transaction ID:</span>
+                                <span class="text-gray-900 font-mono">{{ approval.transaction_id }}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-gray-700 block text-sm">Total Amount:</span>
+                                <span class="text-gray-900 font-semibold">₹ {{ "%.2f"|format(approval.total_amount | float) }}</span>
+                            </div>
+                            <div class="flex space-x-2 justify-end">
+                                <!-- Approve Form -->
+                                <form method="POST" action="{{ url_for('admin.admin_approve_transaction', transaction_id=approval.transaction_id) }}" onsubmit="return confirm('Approve payment for Transaction ID: {{ approval.transaction_id }}?');">
+                                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm">
+                                        <i class="fas fa-check mr-1"></i> Approve
+                                    </button>
+                                </form>
+                                <!-- Reject Form (Consider adding a reason input via JS popup) -->
+                                <form method="POST" action="{{ url_for('admin.admin_reject_transaction', transaction_id=approval.transaction_id) }}" onsubmit="return confirm('REJECT payment for Transaction ID: {{ approval.transaction_id }}? This will reset the fine status.');">
+                                      {# Optional: Add a hidden input for reason if using a modal #}
+                                      {# <input type="hidden" name="reason" value="Rejected via button"> #}
+                                     <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm">
+                                        <i class="fas fa-times mr-1"></i> Reject
+                                    </button>
+                                </form>
+                                 <!-- Details Toggle Button -->
+                                 <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1.5 px-4 rounded focus:outline-none focus:shadow-outline text-sm" onclick="toggleDetails('details-{{ approval.transaction_id }}', this)">
+                                    <i class="fas fa-chevron-down"></i> Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Collapsible Details -->
+                    <div id="details-{{ approval.transaction_id }}" class="hidden p-4 bg-white">
+                        <h4 class="text-md font-semibold mb-2 text-gray-700">Fines in this Transaction:</h4>
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="border-b border-gray-200 p-2 font-semibold text-gray-600">Fine Category</th>
+                                    <th class="border-b border-gray-200 p-2 font-semibold text-gray-600">Reason</th>
+                                    <th class="border-b border-gray-200 p-2 font-semibold text-gray-600 text-right">Amount</th>
+                                    <th class="border-b border-gray-200 p-2 font-semibold text-gray-600">Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fine in approval.fines %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border-b border-gray-200 p-2 text-gray-800">{{ fine.fine_category }}</td>
+                                    <td class="border-b border-gray-200 p-2 text-gray-800">{{ fine.reason }}</td>
+                                    <td class="border-b border-gray-200 p-2 text-gray-800 text-right">₹ {{ "%.2f"|format(fine.amount | float) }}</td>
+                                    <td class="border-b border-gray-200 p-2 text-gray-800">{{ fine.due_date }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="bg-gray-50 font-semibold">
+                                     <td class="border-b border-gray-200 p-2 text-right text-gray-700" colspan="2">Total</td>
+                                    <td class="border-b border-gray-200 p-2 text-gray-700 text-right">₹ {{ "%.2f"|format(approval.total_amount | float) }}</td>
+                                    <td class="border-b border-gray-200 p-2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-10">
+                <i class="fas fa-check-double fa-3x text-green-400 mb-4"></i>
+                <p class="text-gray-500">No payments currently awaiting approval.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleDetails(id, button) {
+        const details = document.getElementById(id);
+        const icon = button.querySelector('i');
+        if (details.classList.contains('hidden')) {
+            details.classList.remove('hidden');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+             button.classList.add('bg-gray-300'); // Indicate open state
+        } else {
+            details.classList.add('hidden');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+             button.classList.remove('bg-gray-300'); // Indicate closed state
+        }
+    }
+</script>
+
+{# Include flash messages block if not already in admin_home.html base template #}
+{# {% include 'flash_messages.html' %} #}
+{% endblock %}

@@ -1,9 +1,0 @@
-{% extends 'index.html' %}
-{% block body %}
-    
-        Admin Dashboard
-    
-New Entry
-View Fines
-
-{% endblock %}
